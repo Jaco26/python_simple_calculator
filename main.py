@@ -1,12 +1,8 @@
+import sys
 from models import CharList, PriorityQueue
+from constants import *
 
-LEFT_PAREN = '('
-RIGHT_PAREN = ')'
-EXPONENT = '**'
-MULTIPLY = '*'
-DIVIDE = '/'
-ADD = '+'
-SUBTRACT = '-'
+operators = ['(', ')', '*', '**', '/', '+', '-']
 
 
 test_strings = {
@@ -18,8 +14,15 @@ test_strings = {
                 (most inner)
               )
               (what are you)
-            )'''
+            )''',
+  's4': '3 * 9 / 34 - 9',
 }
+
+def to_float(val):
+  try:
+    return float(val)
+  except:
+    return None
 
 def get_priority(char):
   if char == LEFT_PAREN:
@@ -42,22 +45,29 @@ class ParenNode:
     self.children = []
 
 
-def chomp_str():
+def chomp_str(some_str):
   queue = PriorityQueue()
-  char_list = CharList(test_strings['s1'])
+  char_list = CharList(some_str)
 
-  print(char_list)
+  for (item, left, right) in char_list:
+    if item.value in operators:
+      if right.value != LEFT_PAREN:
+        queue.enqueue(left, item, right)
+        right.queued = True
+        item.queued = True
+        left.queued = True
 
-  def consume_cb(lst: CharList, char):
-    char_priority = get_priority(char)
-    if char_priority == 2:
-      
-
-      queue.enqueue(paren_node, 1)
-      # print(char, char_priority)
-    
-  char_list.consume(consume_cb)
+  return queue
 
 
-chomp_str()
 
+def main():
+  arg = ''.join(sys.argv[1:])
+  input_expr = test_strings[arg] if test_strings.get(arg) else arg
+  print(input_expr)
+  print('-----'*3)
+  ops = chomp_str(input_expr)
+  print(ops.values)
+
+if __name__ == '__main__':
+  main()

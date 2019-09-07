@@ -1,0 +1,7 @@
+LEFT_PAREN = '('
+RIGHT_PAREN = ')'
+EXPONENT = '**'
+MULTIPLY = '*'
+DIVIDE = '/'
+ADD = '+'
+SUBTRACT = '-'
