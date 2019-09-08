@@ -1,6 +1,5 @@
 
-operators = ['(', ')', '*', '**', '/', '+', '-']
-
+from constants import OPERATORS
 
 class CharListNode:
   def __init__(self, value):
@@ -17,7 +16,7 @@ def split_str(string, accumulator):
     section = ''
     while len(char_list):
       char = char_list.pop(0)
-      if char in operators:
+      if char in OPERATORS:
         if len(section):
           accum.append(CharListNode(section))
         accum.append(CharListNode(char))
@@ -28,6 +27,10 @@ def split_str(string, accumulator):
       accum.append(CharListNode(section))
     return accum
   return inner(character_list, accumulator)
+
+
+def create_simple_char_list(some_str):
+  return [x.value for x in split_str(some_str, [])]
 
 
 class CharList:
@@ -59,4 +62,26 @@ class CharList:
       return None
     item = self._items[index]
     return item
+  
+  def get_slice(self, start, end=None):
+    if not end:
+      end = len(self) - 1
+    if end < len(self):
+      items_slice = ''.join([item.value for item in self._items[start:end]])
+      return CharList(items_slice)
+    return None
+
+  def splice(self, start, end=None):
+    if not end:
+      end = len(self) - 1
+    if end < len(self):
+      spliced_values = ''.join([x.value for x in self._items[start:end]])
+      self._items = [*self._items[:start], *self._items[end:]]
+      return CharList(spliced_values)
+    return None
+
+  def shift(self):
+    if len(self):
+      return self.pop(0)
+    return None
   

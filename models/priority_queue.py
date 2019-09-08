@@ -3,17 +3,21 @@ from constants import *
 operators = ['(', ')', '*', '**', '/', '+', '-']
 
 class PQNode:
-  def __init__(self, value):
+  def __init__(self, value=[]):
     operator = next((x for x in value if x in operators))
 
-    if operator == MULTIPLY:
+    if operator == LEFT_PAREN:
       priority = 1
-    elif operator == DIVIDE:
+    elif operator == EXPONENT:
       priority = 2
-    elif operator == ADD:
+    elif operator == MULTIPLY:
       priority = 3
-    elif operator == SUBTRACT:
+    elif operator == DIVIDE:
       priority = 4
+    elif operator == ADD:
+      priority = 5
+    elif operator == SUBTRACT:
+      priority = 6
 
     self.value = value
     self.priority = priority
@@ -26,9 +30,11 @@ class PriorityQueue:
   def __init__(self):
     self.values = []
 
-  def enqueue(self, *args):
-    value = [x.value for x in args if not x.queued]
+  def enqueue(self, item=[]):
+    value = [x.value for x in item if not x.queued]
     self.values.append(PQNode(value))
+    for x in item:
+      x.queued = True
     self.values = sorted(self.values, key=lambda n: n.priority)
 
   def dequeue(self):
