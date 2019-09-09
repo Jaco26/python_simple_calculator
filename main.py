@@ -22,7 +22,8 @@ def main():
   input_expr = test_strings[arg] if test_strings.get(arg) else arg
   demo('INPUT', input_expr)
   paren_tree = ParenTree(input_expr)
-  demo('PAREN TREE RESULT', paren_tree)
+  # demo('PAREN TREE RESULT', paren_tree)
+  # print(paren_tree.root.operations)
   print(paren_tree.root.operations.items[0].operation['left'].operations)
   # op_tree = OperationsTree(input_expr)
   # for x in op_tree.root.values:

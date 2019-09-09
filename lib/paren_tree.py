@@ -97,78 +97,31 @@ class ParenNode:
         pq_node = PQNode(operation)
         self.operations.enqueue(pq_node)
       
-      # handle non-ParenNode items in self.items
-      for i, item in enumerate(self.items):
-        if type(item) is not ParenNode and not item.queued:
-          left = get_from(self.items, i - 1)
-          next_left = get_from(self.items, i - 2)
-          right = get_from(self.items, i + 1)
-          next_right = get_from(self.items, i + 2)
-
-          if item.value in OPERATORS:
-            print_this = f'right={right.value + "(Qd)" if right.queued else right.value}\n' if type(right) is CharListNode else 'right=ParenNode\n'
-            print_this += f'item={item.value + "(Qd)" if item.queued else item.value}\n' if type(item) is CharListNode else 'item=ParenNode\n'
-            print_this += f'left={left.value + "(Qd)" if left.queued else left.value}\n' if type(left) is CharListNode else 'left=ParenNode\n'
-            print(print_this)
-            
-      
-      for node in paren_nodes:
-        node.prioritize_items()
-
-        # print('left', left)
-        # demo('Operation dictionary', operation)
+    # handle non-ParenNode items in self.items
+    for i, item in enumerate(self.items):
+      if type(item) is not ParenNode and not item.queued and item.value in OPERATORS:
         
+        left = get_from(self.items, i - 1)
+        right = get_from(self.items, i + 1)
 
+        operation = {
+          'operator': item.value,
+          'left': left.value if type(left) is not ParenNode and not left.queued else 'SOME_PAREN_NODE',
+          'right': right.value if type(right) is not ParenNode and not right.queued else 'SOME_PAREN_NODE',
+        }
 
+        pq_node = PQNode(operation)
 
+        self.operations.enqueue(pq_node)
 
-
-
-  # def prioritize_items(self):
-  #   item_len = len(self.items)
-  #   demo('Number of items in current ParenNode', item_len)
-  #   for i, item in enumerate(self.items):
-  #     left = self.items[i - 1] if i > 0 else None
-  #     right = self.items[i + 1] if i < len(self.items) - 1 else None
-
-  #     pq_node = PQNode()
-
-  #     if type(item) is ParenNode: # ITEM IS PAREN_NODE
-  #       if left is None: # we are at the beginning of items 
-  #         # We want to look to the right of item for the operator. If the item 
-  #         # to the right is not an operator, we assume the operator should be MULTIPLY. 
-  #         if right.value in OPERATORS:
-  #           operator = right.value
-  #         else:
-  #           operator = MULTIPLY
+        # print_this = f'left={left.value + "(Qd)" if left.queued else left.value}\n' if type(left) is CharListNode else 'left=ParenNode\n'
+        # print_this += f'item={item.value + "(Qd)" if item.queued else item.value}\n' if type(item) is CharListNode else 'item=ParenNode\n'
+        # print_this += f'right={right.value + "(Qd)" if right.queued else right.value}\n' if type(right) is CharListNode else 'right=ParenNode\n'
+        # print(print_this)
           
-  #         pq_node.operator = operator
-          
-  #         next_to_right = self.items[i + 2]
-
-  #         if type(next_to_right) is ParenNode: 
-  #           pass
-  #         elif next_to_right.value in OPERATORS:
-  #           parser_error('cannot have two adjacent operators')
-  #         else:
-  #           pass
-            
-    
-  #       elif right is None: # we are at the end of items
-  #         pass
- 
-  #       else: # we are somewhere in the middle of items
-  #         pass
-
-  #     elif type(item) is CharListNode: # ITEM IS CHAR_LIST_NODE
-  #       if item.value in OPERATORS:
-  #         # what is the operator
-  #         # what is left
-  #         # what is right
-  #         pq_node = PQNode()
-  #         # print(left, item, right)
-
-
+    for node in paren_nodes:
+      node.prioritize_items()
+      
 
 
 class ParenTree:
@@ -194,45 +147,3 @@ class ParenTree:
       else:
         node.items.append(char)
     return node
-
-
-# class ParenNode:
-#   def __init__(self):
-#     self.text = []
-#     self.children = []
-  
-#   def __repr__(self):
-#     return f'ParenNode - text: {self.text}'
-
-
-# class ParenTree:
-#   def __init__(self, some_str):
-#     char_list = create_simple_char_list(some_str)
-#     self.root = self.build_from(char_list)
-
-#   def __repr__(self):
-#     def traverse(node: ParenNode, accum, tab):
-#       accum += tab + node.__repr__() + '\n'
-#       if len(node.children):
-#         tab += '  '
-#         for child in node.children:
-#           accum += traverse(child, '', tab) 
-#       return accum
-#     return traverse(self.root, '', '')
-
-#   def build_from(self, char_list: list):
-#     node = ParenNode()
-#     while len(char_list):
-#       item = char_list.pop(0)
-#       if item == LEFT_PAREN:
-#         child_node = self.build_from(char_list)
-#         # node.text.append(child_node)
-#         node.text.append(f'PAREN_{len(node.children)}')
-#         node.children.append(child_node)
-#       elif item == RIGHT_PAREN:
-#         return node
-#       else:
-#         node.text.append(item)
-#     return node
-
-  
