@@ -1,6 +1,6 @@
 import sys
 from constants import demo
-from lib import OperationsTree
+from lib import ParenTree
 
 test_strings = {
   's1': '8.33*(1/  2.1 )',
@@ -20,10 +20,12 @@ test_strings = {
 def main():
   arg = ''.join(sys.argv[1:])
   input_expr = test_strings[arg] if test_strings.get(arg) else arg
-  op_tree = OperationsTree(input_expr)
   demo('INPUT', input_expr)
-  for x in op_tree.root.values:
-    print(x)
+  paren_tree = ParenTree(input_expr)
+  demo('PAREN TREE RESULT', paren_tree)
+  # op_tree = OperationsTree(input_expr)
+  # for x in op_tree.root.values:
+  #   print(x)
 
 
 if __name__ == '__main__':

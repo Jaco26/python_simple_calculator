@@ -6,8 +6,8 @@ class CharListNode:
     self.queued = False
   
   def __repr__(self):
-    return f'{self.value}(queued)' if self.queued else self.value
-
+    # return f'CharListNode {self.value + "(queued)" if self.queued else self.value}'
+    return self.value
 
 class CharList:
   def __init__(self, expression):
@@ -40,8 +40,16 @@ class CharList:
       raise StopIteration
     self._idx += 1
     return item
+  
+  def __len__(self):
+    return len(self._items)
 
   def get(self, index):
-    if index < len(self._items) and index > -1:
+    if index < len(self) and index > -1:
       return self._items[index]
+    return None
+
+  def shift(self):
+    if len(self):
+      return self._items.pop(0)
     return None

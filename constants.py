@@ -8,7 +8,7 @@ DIVIDE = '/'
 ADD = '+'
 SUBTRACT = '-'
 
-OPERATORS = ['(', ')', '*', '**', '/', '+', '-']
+OPERATORS = ['(', ')', '**', '*', '/', '+', '-']
 
 
 def demo(header, item):
@@ -19,3 +19,7 @@ def demo(header, item):
     print(item)
     print()
 
+def parser_error(message):
+  print()
+  print('[PARSER ERROR] -', message)
+  print()
