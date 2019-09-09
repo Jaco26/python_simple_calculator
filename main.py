@@ -23,6 +23,7 @@ def main():
   demo('INPUT', input_expr)
   paren_tree = ParenTree(input_expr)
   demo('PAREN TREE RESULT', paren_tree)
+  print(paren_tree.root.operations.items[0].operation['left'].operations)
   # op_tree = OperationsTree(input_expr)
   # for x in op_tree.root.values:
   #   print(x)

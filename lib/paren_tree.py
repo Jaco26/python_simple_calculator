@@ -4,6 +4,12 @@ from .char_list import CharList, CharListNode
 from .priority_queue import PriorityQueue, PQNode
 # from models.char_list import create_simple_char_list
 
+def get_from(lst, index):
+  try:
+    return lst[index] if index > -1 else None
+  except:
+    return None
+
 class ParenNode:
   def __init__(self):
     self.items = []
@@ -15,8 +21,6 @@ class ParenNode:
   def prioritize_items(self):
     item_len = len(self.items)
     paren_nodes = [x for x in self.items if type(x) is ParenNode]
-    demo('Number of items in current ParenNode', item_len)
-    demo('Number of ParenNodes in current ParenNode.items', len(paren_nodes))
 
     # handle ParenNode instances in self.items
     if len(paren_nodes):
@@ -65,34 +69,51 @@ class ParenNode:
             right_operator = MULTIPLY
 
           left_is_priority = OPERATORS.index(left_operator) < OPERATORS.index(right_operator)
-
-          operation['operator'] = left_operator if left_is_priority else right_operator
-
           
-            
-          
-          print( next_left, left, 'PARENS', right, next_right)
-          # if left.value in OPERATORS:
-          #   operation['operator']
-          # operation['left'] = left.value
-          # operation['']
+          if left_is_priority:
+            if left.value in OPERATORS:
+              operation['operator'] = left.value
+              operation['left'] = next_left.value
+              next_left.queued = True
+              left.queued = True
+            else:
+              operation['operator'] = MULTIPLY
+              operation['left'] = left.value
+              left.queued = True
+            operation['right'] = paren_node
 
-        
+          else:
+            if right.value in OPERATORS:
+              operation['operator'] = right.value
+              operation['right'] = next_right.value
+              next_right.queued = True
+              right.queued = True
+            else:
+              operation['operator'] = MULTIPLY
+              operation['right'] = right.value
+              right.queued = True
+            operation['left'] = paren_node
+
         pq_node = PQNode(operation)
         self.operations.enqueue(pq_node)
       
       # handle non-ParenNode items in self.items
-      else:
-        for item in self.items:
-          if type(item) is not ParenNode and not item.queued:
-            print('HHUUUU', item)
+      for i, item in enumerate(self.items):
+        if type(item) is not ParenNode and not item.queued:
+          left = get_from(self.items, i - 1)
+          next_left = get_from(self.items, i - 2)
+          right = get_from(self.items, i + 1)
+          next_right = get_from(self.items, i + 2)
+
+          if item.value in OPERATORS:
+            print_this = f'right={right.value + "(Qd)" if right.queued else right.value}\n' if type(right) is CharListNode else 'right=ParenNode\n'
+            print_this += f'item={item.value + "(Qd)" if item.queued else item.value}\n' if type(item) is CharListNode else 'item=ParenNode\n'
+            print_this += f'left={left.value + "(Qd)" if left.queued else left.value}\n' if type(left) is CharListNode else 'left=ParenNode\n'
+            print(print_this)
+            
       
       for node in paren_nodes:
         node.prioritize_items()
-
-
-
-        
 
         # print('left', left)
         # demo('Operation dictionary', operation)
