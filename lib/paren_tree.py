@@ -1,8 +1,10 @@
+import uuid
 from constants import *
 from models.char_list import create_simple_char_list
 
 class ParenNode:
   def __init__(self):
+    # self.id = uuid.uuid4()
     self.text = []
     self.children = []
   
@@ -14,6 +16,7 @@ class ParenTree:
   def __init__(self, some_str):
     char_list = create_simple_char_list(some_str)
     self.root = self.build_from(char_list)
+    self.node_map = {}
 
   def __repr__(self):
     def traverse(node: ParenNode, accum, tab):
@@ -31,6 +34,7 @@ class ParenTree:
       item = char_list.pop(0)
       if item == LEFT_PAREN:
         child_node = self.build_from(char_list)
+        # node.text.append(child_node)
         node.text.append(f'PAREN_{len(node.children)}')
         node.children.append(child_node)
       elif item == RIGHT_PAREN:
