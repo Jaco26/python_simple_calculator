@@ -19,11 +19,7 @@ class ParenNode:
 class EvaluationNode:
   def __init__(self, value):
     try:
-      if type(value) is int or type(value) is float:
-        value = value
-      elif type(value) is str:
-        value = float(value) if '.' in value else int(value)
-      self.value = value
+      self.value = float(value)
     except:
       self.value = value # I think this shoul only be the case when `value` is an operator
 
@@ -31,11 +27,9 @@ class EvaluationNode:
     return f'EvNode {self.value}'
 
 
-
 class ParenTree:
   def __init__(self):
     self.root = None
-
 
   def __repr__(self):
     return f'ParenTree: {self.root}'
@@ -77,8 +71,6 @@ class ParenTree:
 
 
     def do_math(operator=None, left=None, right=None):
-      if right == 'pass' or left == 'pass':
-        return 0
       if operator == EXPONENT:
         return left**right
       elif operator == MULTIPLY:

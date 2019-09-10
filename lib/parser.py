@@ -10,6 +10,8 @@ class Parser:
         if char in OPERATORS:
           if len(section):
             accum.append(section)
+          if len(char_list) and char_list[0] == MULTIPLY:
+            char += char_list.pop(0) # and this is how we properly parse the EXPONENT operator...
           accum.append(char)
           return inner(char_list, accum)
         else:

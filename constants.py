@@ -8,7 +8,15 @@ DIVIDE = '/'
 ADD = '+'
 SUBTRACT = '-'
 
-OPERATORS = ['(', ')', '**', '*', '/', '+', '-']
+OPERATORS = [
+  LEFT_PAREN,
+  RIGHT_PAREN,
+  EXPONENT,
+  MULTIPLY,
+  DIVIDE,
+  ADD,
+  SUBTRACT
+]
 
 
 def demo(header, item):
