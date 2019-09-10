@@ -87,7 +87,7 @@ class ParenTree:
       queue = PriorityQueue()
       visited = set()
       evaluation_nodes = create_evaluation_nodes(node)
-      for op in [EXPONENT, MULTIPLY, DIVIDE, ADD, SUBTRACT]:
+      for op in OPERATORS:
         for i, ev_node in enumerate(evaluation_nodes):
           if ev_node.value == op:
             left = get_from(evaluation_nodes, i - 1)
@@ -109,6 +109,7 @@ class ParenTree:
       
       # do math
       accum = 0
+      # print(queue)
       while len(queue):
         item = queue.dequeue()
         operator = item['operator'].value
@@ -118,6 +119,9 @@ class ParenTree:
           left = left.value
         elif type(left) is PQNode:
           op = left.operation
+          if type(op['left']) is PQNode:
+            print(op['left'])
+          print(type(op['operator']), type(op['left']), type(op['right']))
           left = do_math(operator=op['operator'].value, left=op['left'].value, right=op['right'].value)
           accum -= left
         if type(right) is EvaluationNode:
@@ -127,6 +131,7 @@ class ParenTree:
           right = do_math(operator=op['operator'].value, left=op['left'].value, right=op['right'].value)
           accum -= right
         accum += do_math(operator=operator, left=left, right=right)
+        
       return accum
 
     return traverse(self.root)
