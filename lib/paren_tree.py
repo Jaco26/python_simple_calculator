@@ -16,7 +16,7 @@ class ParenNode:
     self.operations = PriorityQueue()
 
   def __repr__(self):
-    return f'ParenNode: {self.items}' 
+    return f'ParenNode: {self.items}'
   
   def prioritize_items(self):
     item_len = len(self.items)
@@ -27,10 +27,10 @@ class ParenNode:
       paren_node_indexes = [self.items.index(x) for x in paren_nodes]
       for paren_node_i in paren_node_indexes:
         paren_node = self.items[paren_node_i]
-        left = self.items[paren_node_i - 1] if paren_node_i > 0 else None
-        next_left = self.items[paren_node_i - 2] if paren_node_i > 1 else None
-        right = self.items[paren_node_i + 1] if paren_node_i < len(self.items) - 1 else None
-        next_right = self.items[paren_node_i + 2] if paren_node_i < len(self.items) - 2 else None
+        left = get_from(self.items, paren_node_i - 1)
+        next_left = get_from(self.items, paren_node_i - 2)
+        right = get_from(self.items, paren_node_i + 1)
+        next_right = get_from(self.items, paren_node_i + 2)
         
         operation = {}
 
@@ -104,20 +104,21 @@ class ParenNode:
         left = get_from(self.items, i - 1)
         right = get_from(self.items, i + 1)
 
-        operation = {
-          'operator': item.value,
-          'left': left.value if type(left) is not ParenNode and not left.queued else 'SOME_PAREN_NODE',
-          'right': right.value if type(right) is not ParenNode and not right.queued else 'SOME_PAREN_NODE',
-        }
+        operation = { 'operator': item.value }
+
+        if type(left) is ParenNode:
+          operation['left'] = next((x for x in self.operations.items if x.operation['right'] is left))
+        else:
+          operation['left'] = left.value
+
+        if type(right) is ParenNode:
+          operation['right'] = next((x for x in self.operations.items if x.operation['left'] is right))
+        else:
+          operation['right'] = right.value
 
         pq_node = PQNode(operation)
 
         self.operations.enqueue(pq_node)
-
-        # print_this = f'left={left.value + "(Qd)" if left.queued else left.value}\n' if type(left) is CharListNode else 'left=ParenNode\n'
-        # print_this += f'item={item.value + "(Qd)" if item.queued else item.value}\n' if type(item) is CharListNode else 'item=ParenNode\n'
-        # print_this += f'right={right.value + "(Qd)" if right.queued else right.value}\n' if type(right) is CharListNode else 'right=ParenNode\n'
-        # print(print_this)
           
     for node in paren_nodes:
       node.prioritize_items()
@@ -127,15 +128,11 @@ class ParenNode:
 class ParenTree:
   def __init__(self, some_str):
     char_list = CharList(some_str)
-
     self.root = self.build_from(char_list)
 
-    self.root.prioritize_items()
-
   def __repr__(self):
-    return f'ParenTree {self.root.items}'
+    return f'ParenTree {self.root}'
 
-  
   def build_from(self, char_list: CharList):
     node = ParenNode()
     while len(char_list):
@@ -147,3 +144,92 @@ class ParenTree:
       else:
         node.items.append(char)
     return node
+
+  def evaluate(self):
+
+    def evaluate_children(items):
+      accum = []
+      for x in items:
+        if type(x) is ParenNode:
+          accum.append(traverse(x))
+        elif type(x) is CharListNode:
+          accum.append(x)
+      return accum
+
+    def traverse(node: ParenNode):
+      # 1: evaluate all ParenNode children before prioritizing and executing operations
+      # for any given node
+      items = evaluate_children(node.items)
+
+      demo('ITEMS from evaluate_children', items)
+      
+      # 2: prioritize operations
+      queue = PriorityQueue()
+
+      visited = set()
+
+      for op in [EXPONENT, MULTIPLY, DIVIDE, ADD, SUBTRACT]:
+        for i, item in enumerate(items):
+          # print('ITEM', type(item))
+          if type(item) is CharListNode and item.value == op:
+           
+            left = get_from(items, i - 1)
+            right = get_from(items, i + 1)
+
+            if left in visited:
+              print('LEFT has already been visted', left)
+              left = 'some_queued_item'
+            
+            if right in visited:
+              print('RIGHT has already been visited', right)
+              right = 'some_queued_item'
+            
+            operation = dict(operator=item, left=left, right=right)
+
+            queue.enqueue(PQNode(operation))
+
+            visited.add(left)
+            visited.add(right)
+        
+      # 3: execute operations
+      accum = 0
+      while len(queue):
+        item = queue.dequeue()
+        operator = item['operator']
+        left = to_number(item['left'])
+        right = to_number(item['right'])
+
+
+        # print('**************', to_number(left), operator, to_number(right))
+
+        # print(left, operator, right)
+        # # print()
+        # if type(left) is not PQNode:
+        #   left = float(left)
+        # else:
+        #   pass
+
+        # if type(right) is not PQNode:
+        #   right = float(right)
+        # else:
+        #   pass
+
+        if operator == EXPONENT:
+          accum += left**right
+        elif operator == MULTIPLY:
+          accum += left * right
+        elif operator == DIVIDE:
+          accum += left / right
+        elif operator == ADD:
+          accum += left + right
+        elif operator == SUBTRACT:
+          accum += left - right
+
+        # print('accccum', accum)
+        return accum
+        # demo('DEQUEUED OPERATION', item)
+      
+
+    return traverse(self.root)
+
+
