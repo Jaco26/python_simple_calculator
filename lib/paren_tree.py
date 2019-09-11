@@ -86,7 +86,14 @@ class ParenTree:
     def traverse(node: ParenNode):
       queue = PriorityQueue()
       visited = set()
+      # Step 1:
+      # Serialize all items in node.items into EvaluationNode instances.
+      # Each instance has a `value` attribute which will equal the item if the item is not of type ParenNode.
+      # If an item is of type ParenNode, a value will be recursively calculated for its EvaluationNode.
       evaluation_nodes = create_evaluation_nodes(node)
+
+      # Step 2:
+      # Iterate through the generated EvaluationNode list and queue operations
       for op in OPERATORS:
         for i, ev_node in enumerate(evaluation_nodes):
           if ev_node.value == op:
@@ -107,29 +114,34 @@ class ParenTree:
             visited.add(left)
             visited.add(right)
       
-      # do math
+      # Step 3:
+      # Do math. Iterate through the PriorityQueue instance starting at the beginning and execute
+      # each PQNode.operation
       accum = 0
-      # print(queue)
       while len(queue):
         item = queue.dequeue()
         operator = item['operator'].value
         left = item['left']
         right = item['right']
+
         if type(left) is EvaluationNode:
           left = left.value
         elif type(left) is PQNode:
+          while type(left.operation['left']) is PQNode:
+            left = left.operation['left']
           op = left.operation
-          if type(op['left']) is PQNode:
-            print(op['left'])
-          print(type(op['operator']), type(op['left']), type(op['right']))
-          left = do_math(operator=op['operator'].value, left=op['left'].value, right=op['right'].value)
+          left = do_math(**{key: op[key].value for key in op})
           accum -= left
+
         if type(right) is EvaluationNode:
           right = right.value
         elif type(right) is PQNode:
+          while type(right.operation['right']) is PQNode:
+            right = right.operation['right']
           op = right.operation
-          right = do_math(operator=op['operator'].value, left=op['left'].value, right=op['right'].value)
+          right = do_math(**{key: op[key].value for key in op})
           accum -= right
+
         accum += do_math(operator=operator, left=left, right=right)
         
       return accum

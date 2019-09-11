@@ -13,6 +13,7 @@ test_strings = {
   's7': '3 + 8 * (4 - 2)',
   's8': '8**2',
   's9': '8 + 8 * 9 / (9 + (22 - 30) * (23 * 1.4))',
+  's10': '4 + 5 * (3.44 / 5.22) * (9 / 3 * (8 + 3 - ((1.1 * 8) - 8)))'
 }
   
 def main():
@@ -28,7 +29,10 @@ def main():
   # demo('PARSED PAREN TREE', paren_tree)
   result = paren_tree.evaluate()
   demo('RESULT', result)
-  demo('Python eval() result', eval(input_expr))
+  python_result = eval(input_expr)
+  demo('Python eval() result', python_result)
+  demo('Mine == Python\'s', result == python_result)
+
 
 
 if __name__ == '__main__':
