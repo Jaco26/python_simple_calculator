@@ -1,13 +1,4 @@
 from constants import *
-# from .paren_tree import EvaluationNode
-
-
-def get_from(lst, index):
-  try:
-    return lst[index] if index > -1 else None
-  except:
-    return None
-
 
 class OpQueueNode:
   def __init__(self, eval_node, operator_index, priority):

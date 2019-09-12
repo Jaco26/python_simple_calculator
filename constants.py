@@ -1,4 +1,5 @@
 DEMO = True
+RESULT_ROUND_TO = 8
 
 LEFT_PAREN = '('
 RIGHT_PAREN = ')'

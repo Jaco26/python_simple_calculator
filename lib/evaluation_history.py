@@ -29,7 +29,6 @@ class EvaluationHistory:
     if right.id not in self.evaluated:
       self.evaluated[right.id] = []
     
-
     self.evaluated[left.id].append(node)
     self.evaluated[right.id].append(node)
 

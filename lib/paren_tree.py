@@ -3,13 +3,6 @@ from .operator_queue import OperatorQueue, OpQueueNode
 from .evaluation_history import EvaluationHistory
 
 
-def get_from(lst, index):
-  try:
-    return lst[index] if index > -1 else None
-  except:
-    return None
-
-
 class ParenNode:
   def __init__(self):
     self.items = []
@@ -50,27 +43,9 @@ class ParenTree:
   def parse_char_list(self, char_list: list):
     def traverse_list(lst: list):
       node = ParenNode()
-      # for i, char in enumerate(lst):
-      #   if char == LEFT_PAREN:
-      #     left = get_from(lst, i - 1)
-      #     if left not in OPERATORS:
-      #       node.items.append(MULTIPLY)
-      #     print(lst[i:])
-      #     paren_node_item = traverse_list(lst[i:])
-      #     node.items.append(paren_node_item)
-      #   elif char == RIGHT_PAREN:
-      #     return node
-      #   else:
-      #     node.items.append(char)
-      # return node
-
       while len(lst):
         char = lst.pop(0)
         if char == LEFT_PAREN:
-          # if len(node.items):
-          #   left = node.items[-1]
-          #   if left not in OPERATORS:
-          #     node.items.append(MULTIPLY)
           paren_node_item = traverse_list(lst)
           node.items.append(paren_node_item)
         elif char == RIGHT_PAREN:
@@ -137,12 +112,8 @@ class ParenTree:
         
         result = do_math(**operation)
         
-        print()
-        print(eval_history.most_recent(left), ev_node.value ,eval_history.most_recent(right), '=', result)
         eval_history.add(left, right, result)
-        print(f'L {left.id} logged', eval_history.most_recent(left))
-        print(f'R {right.id} logged', eval_history.most_recent(right))
-      
+  
         accum = result
       
       return accum
