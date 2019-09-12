@@ -1,5 +1,6 @@
 from constants import *
 from .operator_queue import OperatorQueue, OpQueueNode
+from .evaluation_history import EvaluationHistory
 
 
 def get_from(lst, index):
@@ -35,9 +36,9 @@ class EvaluationNode:
 
   def __repr__(self):
     is_from_paren = ' paren' if self.was_paren else ''
-    return f'EvNode {str(self.value) + is_from_paren}'
+    return f'EvNode id={self.id} value={str(self.value) + is_from_paren}'
 
-  
+
 
 class ParenTree:
   def __init__(self):
@@ -45,7 +46,6 @@ class ParenTree:
 
   def __repr__(self):
     return f'ParenTree: {self.root}'
-
 
   def parse_char_list(self, char_list: list):
     def traverse_list(lst: list):
@@ -67,8 +67,6 @@ class ParenTree:
     if not self.root:
       return
 
-    
-    
     def create_evaluation_nodes(node: ParenNode):
       accum = []
       for x in node.items:
@@ -99,15 +97,11 @@ class ParenTree:
     def traverse(node: ParenNode):
       queue = OperatorQueue()
 
-      evaluated = dict()
+      eval_history = EvaluationHistory()
 
       eval_node_list = create_evaluation_nodes(node)
-      # print(eval_node_list)
-      # print()
 
       queue.enqueue_evaluation_nodes(eval_node_list)
-      # print(queue)
-      # print()
 
       accum = 0
       while len(queue):
@@ -117,24 +111,20 @@ class ParenTree:
         left = get_from(eval_node_list, i - 1)
         right = get_from(eval_node_list, i + 1)
 
+
         operation = {
           'operator': ev_node.value,
-          'left': evaluated[left.id] if left.id in evaluated else left.value,
-          'right': evaluated[right.id] if right.id in evaluated else right.value,
+          'left': eval_history.most_recent(left),
+          'right': eval_history.most_recent(right),
         }
-
-        result = do_math(**operation)
-
-        for key in evaluated.keys():
-          evaluated[key] = result
         
-        evaluated[left.id] = result
-        evaluated[right.id] = result
-
-        print(operation['left'], operation['operator'], operation['right'], '=', result)
-        print(evaluated)
+        result = do_math(**operation)
+        
         print()
-        # print()
+        print(eval_history.most_recent(left), ev_node.value ,eval_history.most_recent(right), '=', result)
+        eval_history.add(left, right, result)
+        print(f'L {left.id} logged', eval_history.most_recent(left))
+        print(f'R {right.id} logged', eval_history.most_recent(right))
       
         accum = result
       
