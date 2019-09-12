@@ -27,6 +27,12 @@ def demo(header, item):
     print(item)
     print()
 
+def get_from(lst: list, index: int):
+  try:
+    return lst[index] if index > -1 else None
+  except:
+    return None
+
 def parser_error(message):
   print()
   print('[PARSER ERROR] -', message)

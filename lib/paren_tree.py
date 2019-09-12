@@ -50,9 +50,27 @@ class ParenTree:
   def parse_char_list(self, char_list: list):
     def traverse_list(lst: list):
       node = ParenNode()
+      # for i, char in enumerate(lst):
+      #   if char == LEFT_PAREN:
+      #     left = get_from(lst, i - 1)
+      #     if left not in OPERATORS:
+      #       node.items.append(MULTIPLY)
+      #     print(lst[i:])
+      #     paren_node_item = traverse_list(lst[i:])
+      #     node.items.append(paren_node_item)
+      #   elif char == RIGHT_PAREN:
+      #     return node
+      #   else:
+      #     node.items.append(char)
+      # return node
+
       while len(lst):
         char = lst.pop(0)
         if char == LEFT_PAREN:
+          # if len(node.items):
+          #   left = node.items[-1]
+          #   if left not in OPERATORS:
+          #     node.items.append(MULTIPLY)
           paren_node_item = traverse_list(lst)
           node.items.append(paren_node_item)
         elif char == RIGHT_PAREN:
@@ -110,7 +128,6 @@ class ParenTree:
         ev_node = x.eval_node
         left = get_from(eval_node_list, i - 1)
         right = get_from(eval_node_list, i + 1)
-
 
         operation = {
           'operator': ev_node.value,

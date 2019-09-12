@@ -25,12 +25,13 @@ def main():
   input_expr = test_strings[arg] if test_strings.get(arg) else arg
   demo('RAW INPUT', input_expr)
   char_list = parser.parse_expression(input_expr)
-  # demo('PARSED INPUT', char_list)
+  python_result = eval(''.join(char_list))
+  demo('PARSED INPUT', char_list)
   paren_tree.parse_char_list(char_list)
   # demo('PARSED PAREN TREE', paren_tree)
   result = paren_tree.evaluate()
   demo('RESULT', result)
-  python_result = eval(input_expr)
+  
   demo('Python eval() result', python_result)
   # demo('Mine == Python\'s', result == python_result)
 
