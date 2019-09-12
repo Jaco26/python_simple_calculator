@@ -1,5 +1,5 @@
 from constants import *
-from .paren_tree import EvaluationNode
+# from .paren_tree import EvaluationNode
 
 
 def get_from(lst, index):
@@ -11,12 +11,12 @@ def get_from(lst, index):
 
 class OpQueueNode:
   def __init__(self, eval_node, operator_index, priority):
-    self.eval_node: EvaluationNode = eval_node
+    self.eval_node = eval_node
     self.operator_index = operator_index
     self.priority = priority
   
   def __repr__(self):
-    return f'OpQNode {self.operator_index} {self.eval_node}'
+    return f'OpQNode {self.priority} {self.eval_node}'
 
 
 class OperatorQueue:
@@ -32,19 +32,19 @@ class OperatorQueue:
     return len(self.exponents) + len(self.multiply_divide) + len(self.add_subtract)
 
   def enqueue_evaluation_nodes(self, evaluation_node_list):
-    for i, x in enumerate(evaluation_node_list):
+    for i, eval_node in enumerate(evaluation_node_list):
       priority = i
-      if x.value == MULTIPLY:
+      if eval_node.value == MULTIPLY:
         # check if we're multiplying ParenNodes
         # if so, prioritize this item
         left = get_from(evaluation_node_list, i - 1)
         right = get_from(evaluation_node_list, i + 1)
-        if left.is_evaluated_paren_node and right.is_evaluated_paren_node:
+        if left.was_paren and right.was_paren:
           priority = 0
-      self.enqueue(x, i, priority)
+      node = OpQueueNode(eval_node, i, priority)
+      self.enqueue(node)
 
-  def enqueue(self, eval_node, operator_index, priority):
-    node = OpQueueNode(eval_node, operator_index, priority)
+  def enqueue(self, node: OpQueueNode):
     op = node.eval_node.value
     if op == EXPONENT:
       self.exponents.append(node)
